@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from hsv_256 import hsv_256
 # detects coke can
-# please work
+# please don't be annoying
 cap = cv2.VideoCapture(0)
 
 while True:
