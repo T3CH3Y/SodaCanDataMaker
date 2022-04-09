@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 from hsv_256 import hsv_256
-# detects coke cans
+# detects coke can
 cap = cv2.VideoCapture(0)
 
 while True:
