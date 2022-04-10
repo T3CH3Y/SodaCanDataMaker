@@ -7,25 +7,25 @@ import time
 # it works woo
 
 # object detector color parameters in HSV
-primary_apex = [0, 40, 50]
-primary_vortex = [30, 100, 100]
-secondary_apex = [330, 40, 50]
-secondary_vortex = [360, 100, 100]
-outputfolder = "coke_dataset/"
-obj_width = 300
-obj_height = 300
+primary_apex = [0, 40, 50] # upper bound of color
+primary_vortex = [30, 100, 100] # lower bound of color
+secondary_apex = [330, 40, 50] # optional second upper bound of color
+secondary_vortex = [360, 100, 100] # optional second lower bound of color
+outputfolder = "coke_dataset/" # output folder
+obj_width = 300 # exists in case I want to implement a hard obj size
+obj_height = 300 # exists in case I want to implement a hard obj size
+sens = 5 # scale 1-30, higher is less sensitive, 5 is pretty good
 
 cap = cv2.VideoCapture(0)
-width = int(cap.get(3))
-height = int(cap.get(4))
-contrast = np.zeros((obj_width, obj_height), np.uint8)
+width = int(cap.get(3)) # grabs video width
+height = int(cap.get(4)) # grabs video height
+contrast = np.zeros((obj_width, obj_height), np.uint8) # creates a white background for object mask in case I want it
 contrast[:][:] = 255
-objw, objh = contrast.shape
 
-iterator = 0
+iterator = 0 # keeps track of number of frames created
 
 while True:
-    ret, frame = cap.read()
+    ret, frame = cap.read() # turns into RGB value
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     mask = mask_makr(hsv, primary_apex, primary_vortex)
@@ -34,51 +34,61 @@ while True:
         mask2 = mask_makr(hsv, secondary_apex, secondary_vortex)
         mask = cv2.bitwise_or(mask, mask2)
 
-    mask_sum = 0
-    height_count = 0
-    width_count = 0
-    height_sum = 0
-    width_sum = 0
+    mask_sum = 0 # determines mask density
+    mask_count = 0 # determines how many pixels are masked
+    height_sum = 0 # determines average height for mask
+    width_sum = 0 # determines average width for mask
 
+    # applies the mask
     for i in range(height):
         for j in range(width):
             maskpix = mask[i][j]
             if (maskpix > 0):
                 mask_sum += maskpix
-                height_count += 1
-                width_count += 1
+                mask_count += 1
                 height_sum += i
                 width_sum += j
 
-    if (mask_sum > 300000):
-        cv2.imwrite(outputfolder + str(iterator) + ".jpg", frame)
-        iterator += 1
-    print(mask_sum)
-                
-    average_height = average(height_sum, height_count)
-    average_width = average(width_sum, width_count)
-    print(str(average_height) + " " + str(average_width))
-
-
-    corner1 = [int(average_width - width/3 * (height/width)), average_height - height//3]
-    corner2 = [int(average_width + width/3 * (height/width)), average_height + height//3]
-
-    if (corner1[0] < 0):
-        corner1[0] = 0
-    if (corner1[1] < 0):
-        corner1[1] = 0
-
-    if (corner2[0] >= width):
-        corner2[0] = width - 1
-    if (corner2[1] > height):
-        corner2[1] = height - 1
-
-    
-    
+    # merges mask with color 
     royalmask = cv2.bitwise_and(frame, frame, mask=mask)
-    cv2.rectangle(royalmask, corner1, corner2, (255,255,255), 5)
-    
 
+    print(mask_sum)
+    if (mask_sum > sens * 100000): # boxes the detected can if found
+        quality = True
+
+        average_height = average(height_sum, mask_count)
+        average_width = average(width_sum, mask_count)
+        print(str(average_height) + " " + str(average_width))
+
+        corner1 = [int(average_width - width/3 * (height/width)), average_height - height//3]
+        corner2 = [int(average_width + width/3 * (height/width)), average_height + height//3]
+        print(corner1)
+        print(corner2)
+        if (corner1[0] < 0):
+            corner1[0] = 0
+            quality = False
+        if (corner1[1] < 0):
+            corner1[1] = 0
+            quality = False
+
+        if (corner2[0] >= width):
+            corner2[0] = width - 1
+            quality = False
+        if (corner2[1] > height):
+            corner2[1] = height - 1
+            quality = False
+        
+        if (quality):
+            export_frame = frame[corner1[0]:corner2[0], corner1[1]:corner2[1]]
+            cv2.imwrite(outputfolder + str(iterator) + ".jpg", export_frame)
+            iterator += 1
+        
+        cv2.rectangle(royalmask, corner1, corner2, (255,255,255), 5)
+
+
+
+        
+    # add this script back in for corner detection
     # blackroyal = cv2.cvtColor(royalmask, COLOR_BGR2GRAY)
     # corners = cv2.goodFeaturesToTrack(blackroyal, 20, 0.01, 20)
     # if (corners is not None):
