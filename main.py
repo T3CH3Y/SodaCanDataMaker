@@ -1,7 +1,7 @@
 from cv2 import COLOR_BGR2GRAY
 import numpy as np
 import cv2
-from hsv_256 import hsv_256
+from helper import hsv_256
 from mask_makr import mask_makr
 import time
 # detects coke can
@@ -19,8 +19,9 @@ obj_height = 300
 cap = cv2.VideoCapture(0)
 width = int(cap.get(3))
 height = int(cap.get(4))
-contrast = np.zeros(obj_width, obj_height, 1), np.uint8)
+contrast = np.zeros((obj_width, obj_height), np.uint8)
 contrast[:][:] = 255
+print(contrast)
 objw, objh = contrast.shape
 
 iterator = 0
@@ -35,20 +36,25 @@ while True:
         mask2 = mask_makr(hsv, secondary_apex, secondary_vortex)
         mask = cv2.bitwise_or(mask, mask2)
 
-    # denseCord = cv2.matchTemplate(mask, contrast)
     mask_sum = 0
-    density_sum = 0
-    max_density = 0
+    height_count = 0
+    width_count = 0
+    height_sum = 0
+    width_sum = 0
 
     for i in range(height):
-        
         for j in range(width):
-            mask_sum += mask[i][j]
-            if (i + 299 < height and j + 299 < width):
-                spaghetti = 0 # FIX ME
-
-            
-
+            maskpix = mask[i][j]
+            if (maskpix > 0):
+                mask_sum += maskpix
+                height_count += 1
+                width_count += 1
+                height_sum += i
+                width_sum += j
+                
+    average_height = int(height_sum / height_count)
+    average_width = int(width_sum / width_count)
+    print(average_height + " " + average_width)
 
 
 
