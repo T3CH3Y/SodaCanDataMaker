@@ -13,12 +13,15 @@ primary_vortex = [30, 100, 100]
 secondary_apex = [330, 40, 50]
 secondary_vortex = [360, 100, 100]
 outputfolder = "coke_dataset/"
+obj_width = 300
+obj_height = 300
 
 cap = cv2.VideoCapture(0)
 width = int(cap.get(3))
 height = int(cap.get(4))
-contrast = np.zeros((height, width, 3), np.uint8)
-contrast[:] = (0, 0, 0)
+contrast = np.zeros(obj_width, obj_height, 1), np.uint8)
+contrast[:][:] = 255
+objw, objh = contrast.shape
 
 iterator = 0
 
@@ -32,12 +35,26 @@ while True:
         mask2 = mask_makr(hsv, secondary_apex, secondary_vortex)
         mask = cv2.bitwise_or(mask, mask2)
 
-    royalmask = cv2.bitwise_and(frame, frame, mask=mask)
+    # denseCord = cv2.matchTemplate(mask, contrast)
     mask_sum = 0
+    density_sum = 0
+    max_density = 0
 
     for i in range(height):
+        
         for j in range(width):
             mask_sum += mask[i][j]
+            if (i + 299 < height and j + 299 < width):
+                spaghetti = 0 # FIX ME
+
+            
+
+
+
+
+    royalmask = cv2.bitwise_and(frame, frame, mask=mask)
+   
+
     print(mask_sum)
     if (mask_sum > 300000):
         cv2.imwrite(outputfolder + str(iterator) + ".jpg", frame)
@@ -56,7 +73,7 @@ while True:
         cv2.circle(royalmask, (x,y), 5, (255,255,255), -1)
 
     cv2.imshow('sodas', royalmask)
-    time.sleep(0.2)
+    time.sleep(3)
     if cv2.waitKey(1) == ord('q'):
         break
 cap.release()
