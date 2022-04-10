@@ -1,8 +1,7 @@
 from cv2 import COLOR_BGR2GRAY
 import numpy as np
 import cv2
-from helper import hsv_256
-from mask_makr import mask_makr
+from helper import hsv_256,mask_makr,average
 import time
 # detects coke can
 # it works woo
@@ -21,7 +20,6 @@ width = int(cap.get(3))
 height = int(cap.get(4))
 contrast = np.zeros((obj_width, obj_height), np.uint8)
 contrast[:][:] = 255
-print(contrast)
 objw, objh = contrast.shape
 
 iterator = 0
@@ -51,35 +49,47 @@ while True:
                 width_count += 1
                 height_sum += i
                 width_sum += j
-                
-    average_height = int(height_sum / height_count)
-    average_width = int(width_sum / width_count)
-    print(average_height + " " + average_width)
 
-
-
-    royalmask = cv2.bitwise_and(frame, frame, mask=mask)
-   
-
-    print(mask_sum)
     if (mask_sum > 300000):
         cv2.imwrite(outputfolder + str(iterator) + ".jpg", frame)
         iterator += 1
+    print(mask_sum)
+                
+    average_height = average(height_sum, height_count)
+    average_width = average(width_sum, width_count)
+    print(str(average_height) + " " + str(average_width))
+    corner1 = (average_width - width//2, average_height - height//2)
+    corner2 = (average_width + width//2, average_height + height//2)
 
+    if (corner1[0] < 0):
+        corner1[0] = 0
+    if (corner1[1] < 0):
+        corner1[1] = 0
 
-    blackroyal = cv2.cvtColor(royalmask, COLOR_BGR2GRAY)
-    corners = cv2.goodFeaturesToTrack(blackroyal, 20, 0.01, 20)
-    if (corners is not None):
-        corners = np.int0(corners)
-    else:
-        corners = np.array([])
+    if (corner2[0] >= width):
+        corner2[0] = width - 1
+    if (corner2[1] > height):
+        corner2[1] = height - 1
 
-    for corner in corners:
-        x, y = corner.ravel()
-        cv2.circle(royalmask, (x,y), 5, (255,255,255), -1)
+    
+    
+    royalmask = cv2.bitwise_and(frame, frame, mask=mask)
+
+    
+
+    # blackroyal = cv2.cvtColor(royalmask, COLOR_BGR2GRAY)
+    # corners = cv2.goodFeaturesToTrack(blackroyal, 20, 0.01, 20)
+    # if (corners is not None):
+    #     corners = np.int0(corners)
+    # else:
+    #     corners = np.array([])
+
+    # for corner in corners:
+    #     x, y = corner.ravel()
+    #     cv2.circle(royalmask, (x,y), 5, (255,255,255), -1)
 
     cv2.imshow('sodas', royalmask)
-    time.sleep(3)
+    time.sleep(0.2)
     if cv2.waitKey(1) == ord('q'):
         break
 cap.release()
