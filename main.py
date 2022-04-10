@@ -58,8 +58,10 @@ while True:
     average_height = average(height_sum, height_count)
     average_width = average(width_sum, width_count)
     print(str(average_height) + " " + str(average_width))
-    corner1 = [average_width - width//4, average_height - height//4]
-    corner2 = [average_width + width//4, average_height + height//4]
+
+
+    corner1 = [int(average_width - width/3 * (height/width)), average_height - height//3]
+    corner2 = [int(average_width + width/3 * (height/width)), average_height + height//3]
 
     if (corner1[0] < 0):
         corner1[0] = 0
