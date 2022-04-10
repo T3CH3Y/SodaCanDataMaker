@@ -58,8 +58,8 @@ while True:
     average_height = average(height_sum, height_count)
     average_width = average(width_sum, width_count)
     print(str(average_height) + " " + str(average_width))
-    corner1 = (average_width - width//2, average_height - height//2)
-    corner2 = (average_width + width//2, average_height + height//2)
+    corner1 = [average_width - width//4, average_height - height//4]
+    corner2 = [average_width + width//4, average_height + height//4]
 
     if (corner1[0] < 0):
         corner1[0] = 0
@@ -74,7 +74,7 @@ while True:
     
     
     royalmask = cv2.bitwise_and(frame, frame, mask=mask)
-
+    cv2.rectangle(royalmask, corner1, corner2, (255,255,255), 5)
     
 
     # blackroyal = cv2.cvtColor(royalmask, COLOR_BGR2GRAY)
