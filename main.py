@@ -6,12 +6,16 @@ import time
 # detects coke can
 # it works woo
 
+soda_dictionary = { # HSV Values of (Monocolor) Sodas
+    "coke": ([0, 20, 50], [30, 100, 100], [330, 20, 50], [360, 100, 100]),
+    "sprite": ([90, 20, 40], [140, 100, 100])
+}
 # object detector color parameters in HSV
-primary_apex = [0, 40, 50] # upper bound of color
-primary_vortex = [30, 100, 100] # lower bound of color
-secondary_apex = [330, 40, 50] # optional second upper bound of color
-secondary_vortex = [360, 100, 100] # optional second lower bound of color
-outputfolder = "coke_dataset/" # output folder
+primary_vortex = soda_dictionary["sprite"][0] # lower bound of color
+primary_apex = soda_dictionary["sprite"][1] # upper bound of color
+secondary_vortex = None # optional second lower bound of color
+secondary_apex = None # optional second upper bound of color
+outputfolder = "sprite_dataset/" # output folder
 obj_width = 300 # exists in case I want to implement a hard obj size
 obj_height = 300 # exists in case I want to implement a hard obj size
 sens = 5 # scale 1-30, higher is less sensitive, 5 is pretty good
@@ -28,10 +32,10 @@ while True:
     ret, frame = cap.read() # turns into RGB value
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    mask = mask_makr(hsv, primary_apex, primary_vortex)
+    mask = mask_makr(hsv, primary_vortex, primary_apex)
 
     if (secondary_apex is not None):
-        mask2 = mask_makr(hsv, secondary_apex, secondary_vortex)
+        mask2 = mask_makr(hsv, secondary_vortex, secondary_apex)
         mask = cv2.bitwise_or(mask, mask2)
 
     mask_sum = 0 # determines mask density
@@ -62,8 +66,10 @@ while True:
 
         corner1 = [int(average_width - width/3 * (height/width)), average_height - height//3]
         corner2 = [int(average_width + width/3 * (height/width)), average_height + height//3]
+
         print(corner1)
         print(corner2)
+        print("sledge")
         if (corner1[0] < 0):
             corner1[0] = 0
             quality = False
@@ -79,7 +85,11 @@ while True:
             quality = False
         
         if (quality):
-            export_frame = frame[corner1[0]:corner2[0], corner1[1]:corner2[1]]
+            print(corner1)
+            print(corner2)
+            frame_copy = np.copy(frame)
+            export_frame = frame_copy[corner1[1]:corner2[1], corner1[0]:corner2[0]]
+            print(export_frame.shape)
             cv2.imwrite(outputfolder + str(iterator) + ".jpg", export_frame)
             iterator += 1
         
@@ -101,7 +111,7 @@ while True:
     #     cv2.circle(royalmask, (x,y), 5, (255,255,255), -1)
 
     cv2.imshow('sodas', royalmask)
-    time.sleep(0.2)
+    time.sleep(0.7)
     if cv2.waitKey(1) == ord('q'):
         break
 cap.release()
