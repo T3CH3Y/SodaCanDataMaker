@@ -8,11 +8,9 @@ import time
 # it works wooo
 
 # object detector color parameters in HSV
-primary_vortex = soda_dictionary["sprite"][0] # lower bound of color
-primary_apex = soda_dictionary["sprite"][1] # upper bound of color
-secondary_vortex = None # optional second lower bound of color
-secondary_apex = None # optional second upper bound of color
-outputfolder = "sodas/sprite_dataset/" # output folder
+desired_soda = "coke" #input soda type
+soda_index = soda_dictionary[desired_soda]
+outputfolder = f"sodas/{desired_soda}_dataset/" # output folder
 obj_width = 300 # exists in case I want to implement a hard obj size
 obj_height = 300 # exists in case I want to implement a hard obj size
 sens = 5 # scale 1-30, higher is less sensitive, 5 is pretty good
@@ -21,7 +19,14 @@ cap = cv2.VideoCapture(0)
 width = int(cap.get(3)) # grabs video width
 height = int(cap.get(4)) # grabs video height
 contrast = np.zeros((obj_width, obj_height), np.uint8) # creates a white background for object mask in case I want it
-contrast[:][:] = 255
+contrast[:][:] = 255 # sets contrast to all white
+primary_vortex = soda_index[0] # lower bound of color
+primary_apex = soda_index[1] # upper bound of color
+secondary_vortex = None # possible second lower bound of color
+secondary_apex = None # possible second upper bound of color
+if (len(soda_index) > 2):
+    secondary_vortex = soda_index[2]
+    secondary_apex = soda_index[3]
 
 iterator = 0 # keeps track of number of frames created
 
