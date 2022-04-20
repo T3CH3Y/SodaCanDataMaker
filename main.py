@@ -2,20 +2,17 @@ from cv2 import COLOR_BGR2GRAY
 import numpy as np
 import cv2
 from helper import hsv_256,mask_makr,average
+from soda_hsv import soda_dictionary
 import time
 # detects coke can
 # it works wooo
 
-soda_dictionary = { # HSV Values of (Monocolor) Sodas
-    "coke": ([0, 20, 50], [30, 100, 100], [330, 20, 50], [360, 100, 100]),
-    "sprite": ([90, 20, 40], [140, 100, 100])
-}
 # object detector color parameters in HSV
 primary_vortex = soda_dictionary["sprite"][0] # lower bound of color
 primary_apex = soda_dictionary["sprite"][1] # upper bound of color
 secondary_vortex = None # optional second lower bound of color
 secondary_apex = None # optional second upper bound of color
-outputfolder = "sprite_dataset/" # output folder
+outputfolder = "sodas/sprite_dataset/" # output folder
 obj_width = 300 # exists in case I want to implement a hard obj size
 obj_height = 300 # exists in case I want to implement a hard obj size
 sens = 5 # scale 1-30, higher is less sensitive, 5 is pretty good
@@ -111,7 +108,7 @@ while True:
     #     cv2.circle(royalmask, (x,y), 5, (255,255,255), -1)
 
     cv2.imshow('sodas', royalmask)
-    time.sleep(0.7)
+    time.sleep(0.1)
     if cv2.waitKey(1) == ord('q'):
         break
 cap.release()
