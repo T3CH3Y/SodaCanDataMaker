@@ -13,7 +13,9 @@ soda_index = soda_dictionary[desired_soda]
 outputfolder = f"sodas/{desired_soda}_dataset/" # output folder
 obj_width = 300 # exists in case I want to implement a hard obj size
 obj_height = 300 # exists in case I want to implement a hard obj size
+export_size = 50 # export height and width in pixels
 sens = 5 # scale 1-30, higher is less sensitive, 5 is pretty good
+
 
 cap = cv2.VideoCapture(0)
 width = int(cap.get(3)) # grabs video width
@@ -92,7 +94,7 @@ while True:
             frame_copy = np.copy(frame)
             export_frame = frame_copy[corner1[1]:corner2[1], corner1[0]:corner2[0]]
             print(export_frame.shape)
-            cv2.imwrite(outputfolder + str(iterator) + ".jpg", cv2.resize(export_frame, [50,50]))
+            cv2.imwrite(outputfolder + str(iterator) + ".jpg", cv2.resize(export_frame, [export_size,export_size]))
             iterator += 1
         
         cv2.rectangle(royalmask, corner1, corner2, (255,255,255), 5)
