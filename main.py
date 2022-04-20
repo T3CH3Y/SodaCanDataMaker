@@ -90,7 +90,7 @@ while True:
             frame_copy = np.copy(frame)
             export_frame = frame_copy[corner1[1]:corner2[1], corner1[0]:corner2[0]]
             print(export_frame.shape)
-            cv2.imwrite(outputfolder + str(iterator) + ".jpg", export_frame)
+            cv2.imwrite(outputfolder + str(iterator) + ".jpg", cv2.resize(export_frame, [50,50]))
             iterator += 1
         
         cv2.rectangle(royalmask, corner1, corner2, (255,255,255), 5)
