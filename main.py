@@ -4,7 +4,7 @@ import cv2
 from helper import hsv_256,mask_makr,average
 import time
 # detects coke can
-# it works woo
+# it works wooo
 
 soda_dictionary = { # HSV Values of (Monocolor) Sodas
     "coke": ([0, 20, 50], [30, 100, 100], [330, 20, 50], [360, 100, 100]),
