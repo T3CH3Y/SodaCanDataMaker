@@ -8,13 +8,13 @@ import time
 # it works wooo
 
 # object detector color parameters in HSV
-desired_soda = "coke" #input soda type
+desired_soda = "lemonade" #input soda type
 soda_index = soda_dictionary[desired_soda]
 outputfolder = f"sodas/{desired_soda}_dataset/" # output folder
 obj_width = 300 # exists in case I want to implement a hard obj size
 obj_height = 300 # exists in case I want to implement a hard obj size
 export_size = 50 # export height and width in pixels
-sens = 5 # scale 1-30, higher is less sensitive, 5 is pretty good
+sens = 1.5 # scale 1-30, higher is less sensitive, 5 is pretty good
 
 
 cap = cv2.VideoCapture(0)
