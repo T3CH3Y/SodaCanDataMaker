@@ -8,7 +8,7 @@ import time
 # it works wooo
 
 # object detector color parameters in HSV
-desired_soda = "lemonade" #input soda type
+desired_soda = "fanta" #input soda type
 soda_index = soda_dictionary[desired_soda]
 outputfolder = f"sodas/{desired_soda}_dataset/" # output folder
 obj_width = 300 # exists in case I want to implement a hard obj size
