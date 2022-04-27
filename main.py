@@ -8,13 +8,13 @@ import time
 # it works wooo
 
 # object detector color parameters in HSV
-desired_soda = "fanta" #input soda type
+desired_soda = "background" #input soda type
 soda_index = soda_dictionary[desired_soda]
 outputfolder = f"sodas/{desired_soda}_dataset/" # output folder
 obj_width = 300 # exists in case I want to implement a hard obj size
 obj_height = 300 # exists in case I want to implement a hard obj size
 export_size = 50 # export height and width in pixels
-sens = 1.5 # scale 1-30, higher is less sensitive, 5 is pretty good
+sens = 0 # scale 1-30, higher is less sensitive, 5 is pretty good, set to 0 to take any
 
 
 cap = cv2.VideoCapture(0)
@@ -61,7 +61,7 @@ while True:
     royalmask = cv2.bitwise_and(frame, frame, mask=mask)
 
     print(mask_sum)
-    if (mask_sum > sens * 100000): # boxes the detected can if found
+    if (mask_sum >= sens * 100000): # boxes the detected can if found
         quality = True
 
         average_height = average(height_sum, mask_count)
